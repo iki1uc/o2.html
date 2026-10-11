@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MATT — Respo — leitet von selbst nach OP</title>
+<meta http-equiv="refresh" content="12;url=https://iki1uc.github.io/OP/">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#07070a;color:#e8e8e8;font-family:ui-monospace,Menlo,monospace;min-height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.top{padding:10px 16px;border-bottom:1px solid #222;background:#0f0f14;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#ffcc00;color:#000;padding:2px 8px;font-weight:900;font-size:11px}
+.stage{flex:1;position:relative;background:#000;display:grid;place-items:center;overflow:hidden}
+.stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity 1.2s ease}
+.stage img.active{opacity:1}
+.count{position:absolute;top:16px;right:16px;background:#ffcc00;color:#000;padding:6px 12px;border-radius:999px;font-weight:900;font-size:13px;z-index:10}
+.info{position:absolute;bottom:0;left:0;right:0;padding:14px;background:linear-gradient(transparent, rgba(0,0,0,.85));z-index:6;display:flex;justify-content:space-between;align-items:end}
+.bar{position:absolute;bottom:0;left:0;height:3px;background:#ffcc00;transition:width 1s linear;z-index:7}
+.card{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(18,18,26,.9);border:1px solid #333;border-radius:16px;padding:20px 24px;text-align:center;z-index:8;backdrop-filter:blur(8px)}
+.btn{background:#ffcc00;color:#000;border:0;padding:10px 16px;border-radius:10px;font-weight:900;cursor:pointer;margin-top:10px}
+.btn.sec{background:#1a1a1a;color:#fff;border:1px solid #333}
+</style>
+</head>
+<body>
+<div class="top">
+  <div><span class="badge">MATT — RESPO</span> <span style="font-size:11px;opacity:.6">heisst das respo — leitet von selbst nach OP — nach ner Zeit zu OP</span></div>
+  <div style="font-size:10px;opacity:.5">9=ICH · p81 HOLD · Auto-Weiterleitung · MATT → OP</div>
+</div>
+<div class="stage" id="stage">
+  <div class="count" id="count">12s → OP</div>
+  <div class="bar" id="bar" style="width:0%"></div>
+  <div class="card" id="card">
+    <div style="font-size:20px;font-weight:900;letter-spacing:1px">MATT</div>
+    <div style="font-size:11px;opacity:.6;margin-top:4px;letter-spacing:2px">RESPO</div>
+    <div style="font-size:12px;margin-top:12px;line-height:1.5">Heisst das Respo MATT<br>Zeigt deine gewollten Bilder Blend + Ausblend<br>Zeiten wählt er selber<br><br>Leitet von selbst nach OP weiter<br>nach <span id="sec">12</span>s → OP</div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:center">
+      <button class="btn" onclick="goOP()">JETZT ZU OP →</button>
+      <button class="btn sec" onclick="pause()">⏸ PAUSE</button>
+    </div>
+    <div style="font-size:10px;opacity:.5;margin-top:10px">OP = https://iki1uc.github.io/OP/ — Vulkan-Drache-Gpu-Move + co2 o2 h2o<br>Meta Refresh + JS — geht von selbst</div>
+  </div>
+  <div style="position:absolute;inset:0;display:grid;place-items:center;opacity:.15" id="demoBg"></div>
+  <div class="info">
+    <div>
+      <div style="font-size:12px;font-weight:700" id="iname">MATT Respo — Bilder Blend</div>
+      <div style="font-size:10px;opacity:.6" id="icount">Auto → OP nach 12s — Zeiten selber gewählt</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:11px;background:#12121a;border:1px solid #333;padding:4px 8px;border-radius:999px" id="timeBadge">12s → OP</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Config
+const OP_URL = "https://iki1uc.github.io/OP/";
+const AUTO_SECONDS = 12; // nach ner Zeit zu OP — 12 sec Basis beste alle 3 sec *4 = 12
+let remaining = AUTO_SECONDS;
+let paused = false;
+let timer = null;
+let imgIdx = 0;
+let images = [];
+
+const countEl = document.getElementById('count');
+const secEl = document.getElementById('sec');
+const bar = document.getElementById('bar');
+const timeBadge = document.getElementById('timeBadge');
+const stage = document.getElementById('stage');
+
+function goOP(){
+  window.location.href = OP_URL;
+}
+
+function tick(){
+  if(paused) return;
+  remaining -= 0.1;
+  if(remaining<=0){ goOP(); return; }
+  const pct = ((AUTO_SECONDS - remaining)/AUTO_SECONDS)*100;
+  bar.style.width = pct+'%';
+  const r = Math.max(0, remaining);
+  countEl.textContent = r.toFixed(1)+'s → OP';
+  secEl.textContent = r.toFixed(1);
+  timeBadge.textContent = r.toFixed(1)+'s → OP';
+}
+
+function startCountdown(){
+  timer = setInterval(tick, 100);
+}
+
+// Bilder Blend Demo — von dir gewollten Bilder — Zeiten selber wählen
+function makeDemoImages(){
+  const names = [
+    {name:'MATT Respo — Bild 1', c:'#1a1a1a'},
+    {name:'MATT → OP — Bild 2', c:'#ffcc00'},
+    {name:'co2 o2 h2o — Bild 3', c:'#00d4ff'},
+    {name:'Vulkan-Drache — Bild 4', c:'#ff6a00'}
+  ];
+  names.forEach((d,i)=>{
+    const c=document.createElement('canvas'); c.width=800; c.height=600;
+    const ctx=c.getContext('2d');
+    const g=ctx.createRadialGradient(400,300,0,400,300,500);
+    g.addColorStop(0,d.c); g.addColorStop(1,'#000');
+    ctx.fillStyle=g; ctx.fillRect(0,0,800,600);
+    ctx.fillStyle=i===1?'#000':'#fff'; ctx.font='bold 32px monospace'; ctx.fillText(d.name, 40, 280);
+    ctx.font='14px monospace'; ctx.fillText('MATT Respo — Blend + Ausblend — Auto Zeit '+(2.5+i*0.8).toFixed(1)+'s', 40, 310);
+    ctx.fillText('Leitet von selbst nach OP → '+OP_URL, 40, 330);
+    const img=document.createElement('img');
+    img.src=c.toDataURL();
+    if(i===0) img.classList.add('active');
+    stage.appendChild(img);
+    images.push(img);
+  });
+  // Auto blend every 3 sec — Zeiten selber gewählt
+  setInterval(()=>{
+    if(paused) return;
+    images[imgIdx].classList.remove('active');
+    imgIdx = (imgIdx+1)%images.length;
+    images[imgIdx].classList.add('active');
+  }, 3000);
+}
+
+function pause(){
+  paused = !paused;
+  document.querySelector('button.sec').textContent = paused ? '▶ WEITER' : '⏸ PAUSE';
+  if(!paused) {} // continue countdown
+}
+
+// Init
+makeDemoImages();
+startCountdown();
+
+// Drag Drop für echte Bilder — überschreibt Demo
+function addRealImages(files){
+  // remove demo images
+  if(images.length && images[0].src.startsWith('data:')){
+    // first real drop clears demo
+    if(files[0]) {
+      stage.querySelectorAll('img').forEach(el=>el.remove());
+      images=[];
+      imgIdx=0;
+      makeDemoImages = ()=>{}; // disable
+    }
+  }
+  // Actually add real images on top — simple version
+  Array.from(files).forEach(f=>{
+    if(!f.type.startsWith('image/')) return;
+    const r=new FileReader();
+    r.onload=e=>{
+      const img=document.createElement('img');
+      img.src=e.target.result;
+      stage.appendChild(img);
+      images.push(img);
+      if(images.length===1){ img.classList.add('active'); }
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+document.addEventListener('dragover', e=>e.preventDefault());
+document.addEventListener('drop', e=>{
+  e.preventDefault();
+  if(e.dataTransfer.files.length) addRealImages(e.dataTransfer.files);
+});
+
+// Wenn du MATT als Datei nutzt: Nennen MATT.html oder index.html im MATT Repo
+// Wo rein: iki1uc/MATT/index.html oder iki1uc/MATT/MATT.html
+// Dann https://iki1uc.github.io/MATT/ zeigt MATT Respo und leitet nach 12s von selbst zu OP
+</script>
+</body>
+</html>
